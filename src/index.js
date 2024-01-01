@@ -51,6 +51,7 @@ function App() {
     <div className="container">
       <Header />
       <Menu />
+      {/* <Joke /> */}
       <Footer />
     </div>
   );
@@ -65,44 +66,68 @@ function Header() {
 }
 
 function Menu() {
+  const pizzas = pizzaData;
+  //const pizzas = [];
+  const numPizzas = pizzas.length;
   return (
     <main className="menu">
       <h2>Our Menu</h2>
-      <Pizza pizzas={pizzaData} />
+      {numPizzas > 0 ? (
+        <ul className="pizzas">
+          {pizzas.map((pizza, key) => (
+            <Pizza pizzaObj={pizza} key={key} />
+          ))}
+        </ul>
+      ) : (
+        <p>We are still working on our menu, please come back later</p>
+      )}
     </main>
   );
 }
 
 function Pizza(props) {
-  console.log(props);
+  if (props.pizzaObj.soldOut) return null;
   return (
-    <div>
-      <img src="{}" alt="Pizza Prosciutto" />
-      <h3>Pizza Prosciutto</h3>
-      <p>Tomato, mozarella, ham, aragula, and burrata cheese</p>
-    </div>
+    <li className="pizza">
+      <img src={props.pizzaObj.photoName} alt="Pizza Prosciutto" />
+      <div>
+        <h3>{props.pizzaObj.name}</h3>
+        <p>{props.pizzaObj.ingredients}</p>
+        <span>{props.pizzaObj.price}</span>
+      </div>
+    </li>
   );
 }
 
 const Footer = () => {
   const hour = new Date().getHours();
-  console.log(hour);
-  //   const openHour = 12;
-  //   const closeHour = 22;
-
-  //   if (hour >= openHour && hour <= closeHour) {
-  //     alert("We are currently open");
-  //   } else {
-  //     alert("We are closed");
-  //   }
+  const openHour = 12;
+  const closeHour = 22;
+  const isOpen = hour >= openHour && hour <= closeHour;
   return (
     <footer className="footer">
-      {new Date().toLocaleTimeString()} We are Open
+      {isOpen ? (
+        <Order closeHour={closeHour} />
+      ) : (
+        <p>
+          We are happy to welcome you between {openHour}:00 and {closeHour}:00
+        </p>
+      )}
     </footer>
   );
   //   return React.createElement("footer", null, "We are currently open");
 };
 
+function Order(props) {
+  return (
+    <div className="order">
+      <p>
+        We're open until {props.closeHour}:00. Come visit us or order online.
+      </p>
+      <button className="btn">Order</button>
+    </div>
+  );
+}
 //React V18
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
